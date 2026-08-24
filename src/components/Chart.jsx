@@ -16,6 +16,18 @@ import {
 const COLORS = ["#1f6f50", "#c8912a", "#3a7ca5", "#8a5a83", "#6b7f76", "#b0543f"];
 const AXIS_STYLE = { fill: "#5c6b64", fontSize: 12 };
 
+function compactNumber(value) {
+  const abs = Math.abs(value);
+  if (abs >= 1_000_000_000) return `${(value / 1_000_000_000).toFixed(1)}B`;
+  if (abs >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
+  if (abs >= 1_000) return `${Math.round(value / 1_000)}k`;
+  return String(value);
+}
+
+function axisTitle(axis = {}) {
+  return String(axis.title || "").toLowerCase();
+}
+
 function seriesKey(trace, index) {
   return trace.name || `Series ${index + 1}`;
 }
@@ -33,9 +45,13 @@ function tickFormatter(axis = {}) {
     if (value == null || value === "") return "";
     if (typeof value !== "number") return value;
 
-    const formatted = Math.abs(value) >= 1000 ? value.toLocaleString("en-US") : value;
-    const prefix = axis.tickformat?.includes("$") ? "$" : "";
-    const suffix = axis.ticksuffix || "";
+    const title = axisTitle(axis);
+    const isMoney = axis.tickformat?.includes("$") || title.includes("us$") || title.includes("wage");
+    const isPct = title.includes("%") || title.includes("percent");
+    const useCompact = axis.tickformat?.includes("~s") || Math.abs(value) >= 100_000;
+    const formatted = useCompact ? compactNumber(value) : value.toLocaleString("en-US");
+    const prefix = isMoney ? "$" : "";
+    const suffix = axis.ticksuffix || (isPct ? "%" : "");
     return `${prefix}${formatted}${suffix}`;
   };
 }
