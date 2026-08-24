@@ -84,7 +84,7 @@ export default function App() {
         )}
       </header>
 
-      <main>
+      <main className={route.page === "overview" ? "overview-main" : undefined}>
         {route.page === "overview" && (
           <Overview data={data} onSelect={(c) => go("#/community/" + c)} />
         )}

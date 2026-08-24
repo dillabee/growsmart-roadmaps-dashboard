@@ -1,6 +1,5 @@
 import Chart from "../components/Chart.jsx";
 import SourceNote from "../components/SourceNote.jsx";
-import { fmtMoneyCompact } from "../format.js";
 
 const TRADE_NOTE =
   "U.S. Census Bureau, USA Trade Online — port-level goods trade. Values reflect the port of export/entry, not necessarily local production.";
