@@ -58,7 +58,15 @@ at region level).
 npm install
 npm run dev      # local dev server
 npm run build    # static output in dist/
+python -m pytest tests/ -v   # data-pipeline tests — run before every data refresh
 ```
+
+For the developer taking this over: start with
+`docs/superpowers/specs/2026-08-24-mvp-dashboard-spec.md` (design of record,
+all decisions + rationale) and
+`docs/superpowers/plans/2026-08-24-full-build-plan.md` (task-by-task plan for
+the full build). The tests in `tests/test_build_data.py` lock in the rollup
+and rate math — change that math test-first.
 
 Deployment is automatic: pushing to `main` triggers the GitHub Actions
 workflow (`.github/workflows/deploy.yml`) which builds and publishes to
