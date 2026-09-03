@@ -71,6 +71,7 @@ export default function App() {
         </nav>
         {route.page === "community" && (
           <div className="geo-pills">
+            <span className="geo-pills-label">Community</span>
             {geos.map((g) => (
               <button
                 key={g}

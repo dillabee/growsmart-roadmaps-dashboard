@@ -14,7 +14,7 @@ import {
 } from "recharts";
 
 const COLORS = ["#1f6f50", "#c8912a", "#3a7ca5", "#8a5a83", "#6b7f76", "#b0543f"];
-const AXIS_STYLE = { fill: "#5c6b64", fontSize: 12 };
+const AXIS_STYLE = { fill: "#1f6f50", fontSize: 12, fontWeight: 600 };
 
 function compactNumber(value) {
   const abs = Math.abs(value);

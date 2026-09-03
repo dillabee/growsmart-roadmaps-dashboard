@@ -17,6 +17,32 @@ function series(obj) {
   return { x: years, y: years.map((y) => obj[y]) };
 }
 
+// Parse a Census income-bracket label ("$25,000 - $29,999", "<$10,000", "$200,000+")
+// into a numeric [lo, hi) range for interpolating a median from binned counts.
+function parseIncomeBracket(label) {
+  const nums = (label.match(/[\d,]+/g) || []).map((n) => Number(n.replace(/,/g, "")));
+  if (label.startsWith("<")) return { lo: 0, hi: nums[0] };
+  if (label.includes("+")) return { lo: nums[0], hi: nums[0] * 2 };
+  return { lo: nums[0], hi: (nums[1] ?? nums[0]) + 1 };
+}
+
+function medianFromDist(dist) {
+  const bins = Object.entries(dist || {})
+    .map(([label, count]) => ({ ...parseIncomeBracket(label), count: count || 0 }))
+    .sort((a, b) => a.lo - b.lo);
+  const total = bins.reduce((sum, b) => sum + b.count, 0);
+  if (!total) return null;
+  const half = total / 2;
+  let cum = 0;
+  for (const bin of bins) {
+    if (cum + bin.count >= half) {
+      return bin.count ? bin.lo + ((half - cum) / bin.count) * (bin.hi - bin.lo) : bin.lo;
+    }
+    cum += bin.count;
+  }
+  return bins[bins.length - 1]?.lo ?? null;
+}
+
 export default function Community({ data, geo }) {
   const demo = data.demographics[geo];
   const econ = data.econ[geo];
@@ -29,9 +55,41 @@ export default function Community({ data, geo }) {
 
   const [popYear, pop] = latest(demo.population);
   const [, pop0] = first(demo.population);
-  const [, mhi] = latest(demo.medianHHI);
-  const [, mhi0] = first(demo.medianHHI);
-  const [, age] = latest(demo.medianAge);
+
+  // The region has no single median in the source data (medians don't sum), so
+  // derive one from the combined income distribution and a population-weighted
+  // average of the communities' median ages.
+  const regionMHISeries = useMemo(() => {
+    if (!isRegion) return null;
+    const out = {};
+    Object.keys(demo.incomeDist || {}).forEach((y) => {
+      out[y] = medianFromDist(demo.incomeDist[y]);
+    });
+    return out;
+  }, [isRegion, demo]);
+
+  const regionAgeSeries = useMemo(() => {
+    if (!isRegion) return null;
+    const out = {};
+    data.meta.demoYears.forEach((y) => {
+      let weight = 0;
+      let weighted = 0;
+      data.meta.communities.forEach((c) => {
+        const a = data.demographics[c]?.medianAge?.[y];
+        const p = data.demographics[c]?.population?.[y];
+        if (a != null && p) {
+          weight += p;
+          weighted += a * p;
+        }
+      });
+      out[y] = weight ? weighted / weight : null;
+    });
+    return out;
+  }, [isRegion, data]);
+
+  const [, mhi] = isRegion ? latest(regionMHISeries) : latest(demo.medianHHI);
+  const [, mhi0] = isRegion ? first(regionMHISeries) : first(demo.medianHHI);
+  const [, age] = isRegion ? latest(regionAgeSeries) : latest(demo.medianAge);
   const [, unemp] = latest(demo.unemploymentRate);
   const [, unemp0] = first(demo.unemploymentRate);
   const [, bach] = latest(demo.pctBachelors);
@@ -99,17 +157,23 @@ export default function Community({ data, geo }) {
       <div className="section-head">
         <h2>{geo} Scorecard</h2>
         <div className="compare-toggle">
-          <span>Compare with:</span>
-          {comparisons.map((g) => (
-            <label key={g}>
-              <input
-                type="checkbox"
-                checked={compareGeos.includes(g)}
-                onChange={() => toggleCompare(g)}
-              />
-              {g}
-            </label>
-          ))}
+          <span className="compare-label">Compare with</span>
+          <div className="compare-chips">
+            {comparisons.map((g) => {
+              const active = compareGeos.includes(g);
+              return (
+                <label key={g} className={active ? "compare-chip active" : "compare-chip"}>
+                  <input
+                    type="checkbox"
+                    checked={active}
+                    onChange={() => toggleCompare(g)}
+                  />
+                  <span className="chip-dot" aria-hidden="true" />
+                  {g}
+                </label>
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -123,16 +187,16 @@ export default function Community({ data, geo }) {
         />
         <KpiCard
           label="Median Household Income"
-          value={isRegion ? "See communities" : fmtMoney(mhi)}
-          change={isRegion ? null : fmtChange(mhi, mhi0)}
+          value={fmtMoney(mhi)}
+          change={fmtChange(mhi, mhi0)}
           changeLabel="since 2014"
           good={mhi >= mhi0}
-          compare={isRegion ? null : `Maine: ${fmtMoney(maineMHI)}`}
+          compare={`Maine: ${fmtMoney(maineMHI)}`}
         />
         <KpiCard
           label="Median Age"
-          value={isRegion ? "See communities" : (age ?? "–")}
-          compare={isRegion ? null : `Maine: ${latest(data.demographics["Maine"].medianAge)[1]}`}
+          value={age != null ? age.toFixed(1) : "–"}
+          compare={`Maine: ${latest(data.demographics["Maine"].medianAge)[1]}`}
         />
         <KpiCard
           label="Unemployment Rate"
@@ -156,7 +220,11 @@ export default function Community({ data, geo }) {
           compare={`Maine: ${fmtPct(latest(data.demographics["Maine"].homeownershipRate)[1])}`}
         />
       </div>
-      <SourceNote>{ACS_NOTE}</SourceNote>
+      <SourceNote>
+        {ACS_NOTE}
+        {isRegion &&
+          " Median household income for the Roadmaps Region is derived from the combined income distribution across the six communities; median age is a population-weighted average of their medians."}
+      </SourceNote>
 
       <section className="topic">
         <h3>People</h3>
