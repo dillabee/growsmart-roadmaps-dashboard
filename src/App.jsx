@@ -16,6 +16,9 @@ export default function App() {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [route, setRoute] = useState(parseHash());
+  const isEmbedded = new URLSearchParams(window.location.search).get("embed") === "1";
+  const fullPageUrl = new URL(window.location.href);
+  fullPageUrl.searchParams.delete("embed");
 
   useEffect(() => {
     fetch(import.meta.env.BASE_URL + "data/dashboard_data.json")
@@ -38,16 +41,22 @@ export default function App() {
       : data.meta.region;
 
   return (
-    <div className="app">
+    <div className={isEmbedded ? "app app-embed" : "app"}>
       <header className="masthead">
         <div className="masthead-inner">
           <div>
             <div className="eyebrow">GrowSmart Maine · Roadmaps for Growth</div>
             <h1>Rural Prosperity Scorecard</h1>
           </div>
-          <button className="print-btn" onClick={() => window.print()}>
-            Print scorecard
-          </button>
+          {isEmbedded ? (
+            <a className="print-btn" href={fullPageUrl.href} target="_blank" rel="noopener noreferrer">
+              Open full dashboard ↗
+            </a>
+          ) : (
+            <button className="print-btn" onClick={() => window.print()}>
+              Print scorecard
+            </button>
+          )}
         </div>
         <nav className="tabs">
           <button

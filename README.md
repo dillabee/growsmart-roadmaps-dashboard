@@ -7,6 +7,10 @@ County, and Maine comparisons.
 
 **Live site:** https://dillabee.github.io/growsmart-roadmaps-dashboard/
 
+**Embed on a client website:** Follow the [Squarespace embedding guide](docs/embedding.md)
+and paste [this HTML snippet](deploy/squarespace-embed.html) into a Code block.
+Use `?embed=1` before the URL hash for a compact header with a full-dashboard link.
+
 This MVP implements the structure in *Roadmaps Dashboard Strategy — Grow
 Smart Maine* (0 PM folder) and is intended as the starting point for the full
 build. It is deliberately one app, one normalized dataset — not six
@@ -68,9 +72,9 @@ all decisions + rationale) and
 the full build). The tests in `tests/test_build_data.py` lock in the rollup
 and rate math — change that math test-first.
 
-Deployment is automatic: pushing to `main` triggers the GitHub Actions
-workflow (`.github/workflows/deploy.yml`) which builds and publishes to
-GitHub Pages. `vite.config.js` uses `base: "./"` so the same build also works
+This checkout provides an example GitHub Actions workflow at
+`deploy/github-actions-deploy.yml.example`; automatic deployment requires an
+active workflow in `.github/workflows/`. `vite.config.js` uses `base: "./"` so the same build also works
 in an iframe or on a client subdomain.
 
 ## Known gaps for the full build (intentional MVP cuts)
