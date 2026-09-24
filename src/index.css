@@ -393,7 +393,7 @@ h4 { margin: 0 0 0.5rem; font-size: 0.95rem; color: var(--ink); font-weight: 600
   gap: 1rem;
 }
 .limitation-list {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 0.75rem;
 }
 .limitation-card {
@@ -423,6 +423,7 @@ h4 { margin: 0 0 0.5rem; font-size: 0.95rem; color: var(--ink); font-weight: 600
 .data-notes code {
   background: var(--green-100); color: var(--green-900);
   padding: 0.1rem 0.35rem; border-radius: 4px; font-weight: 700;
+  overflow-wrap: anywhere;
 }
 
 footer {
@@ -445,6 +446,10 @@ footer a { color: var(--green-700); }
   .chart-grid { grid-template-columns: 1fr 1fr; }
 }
 
+@media (max-width: 900px) {
+  .notes-grid { grid-template-columns: 1fr; }
+}
+
 @media (max-width: 640px) {
   .masthead, main { padding-left: 1rem; padding-right: 1rem; }
   .masthead-inner { flex-direction: column; align-items: stretch; }
@@ -452,6 +457,8 @@ footer a { color: var(--green-700); }
   .print-btn { align-self: flex-start; }
   .tabs { overflow-x: auto; width: 100%; }
   .tabs button { flex: 0 0 auto; }
+  .app-embed .tabs { flex-wrap: wrap; overflow-x: visible; }
+  .app-embed .tabs button { flex: 1 1 auto; border-radius: 6px; }
   .notes-hero, .notes-grid { grid-template-columns: 1fr; }
   .notes-source-card, .notes-panel { max-width: calc(100vw - 2rem); }
   .notes-source-card strong { max-width: calc(100vw - 4.2rem); }
