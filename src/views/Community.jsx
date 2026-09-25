@@ -247,7 +247,7 @@ export default function Community({ data, geo }) {
                   ),
                   type: "bar",
                   orientation: "h",
-                  marker: { color: "#1f6f50" },
+                  marker: { color: "var(--green-700)" },
                   hovertemplate: "%{y}: %{x:.1f}%<extra></extra>",
                 },
               ]}
@@ -272,7 +272,7 @@ export default function Community({ data, geo }) {
                   ),
                   type: "bar",
                   name: geo,
-                  marker: { color: "#1f6f50" },
+                  marker: { color: "var(--green-700)" },
                 },
                 {
                   x: Object.keys(maineIncome),
@@ -282,7 +282,7 @@ export default function Community({ data, geo }) {
                   type: "scatter",
                   mode: "lines+markers",
                   name: "Maine",
-                  line: { color: "#c8912a", dash: "dot" },
+                  line: { color: "var(--pink)", dash: "dot" },
                 },
               ]}
               layout={{
@@ -373,7 +373,7 @@ export default function Community({ data, geo }) {
                   name: "2019",
                   type: "bar",
                   orientation: "h",
-                  marker: { color: "#b9cdc2" },
+                  marker: { color: "var(--gold)" },
                 },
                 {
                   y: industries.map((i) => i.title).reverse(),
@@ -381,7 +381,7 @@ export default function Community({ data, geo }) {
                   name: "2025",
                   type: "bar",
                   orientation: "h",
-                  marker: { color: "#1f6f50" },
+                  marker: { color: "var(--green-700)" },
                 },
               ]}
               layout={{

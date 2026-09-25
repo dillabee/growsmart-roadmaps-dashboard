@@ -13,8 +13,8 @@ import {
   YAxis,
 } from "recharts";
 
-const COLORS = ["#1f6f50", "#c8912a", "#3a7ca5", "#8a5a83", "#6b7f76", "#b0543f"];
-const AXIS_STYLE = { fill: "#1f6f50", fontSize: 12, fontWeight: 600 };
+const COLORS = ["var(--green-700)", "var(--pink)", "var(--gold)", "var(--pink-dark)", "#78936b", "var(--gold-ink)"];
+const AXIS_STYLE = { fill: "var(--green-700)", fontSize: 12, fontWeight: 600 };
 
 function compactNumber(value) {
   const abs = Math.abs(value);
@@ -113,7 +113,7 @@ function referenceLines(layout = {}, horizontal) {
     .filter((shape) => shape.type === "line")
     .map((shape, index) => {
       const annotation = layout.annotations?.[index];
-      const stroke = shape.line?.color || "#c8912a";
+      const stroke = shape.line?.color || "var(--pink)";
       const dash = shape.line?.dash === "dash" ? "6 6" : shape.line?.dash === "dot" ? "2 4" : undefined;
       const value = horizontal ? shape.x0 : shape.y0;
 
@@ -248,7 +248,7 @@ export default function Chart({ data, layout = {}, height = 300 }) {
               </YAxis>
             </>
           )}
-          <Tooltip content={<ChartTooltip />} cursor={{ fill: "rgba(31, 111, 80, 0.06)" }} />
+          <Tooltip content={<ChartTooltip />} cursor={{ fill: "rgba(53, 91, 45, 0.06)" }} />
           {showLegend && (
             <Legend
               verticalAlign={layout.legend?.y < 0 ? "bottom" : "top"}

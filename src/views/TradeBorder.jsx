@@ -54,7 +54,7 @@ export default function TradeBorder({ data, port }) {
                   x: trade.top.export_commodity.map((c) => c.value / 1e6).reverse(),
                   type: "bar",
                   orientation: "h",
-                  marker: { color: "#3a7ca5" },
+                  marker: { color: "var(--gold)" },
                   hovertemplate: "%{y}: $%{x:,.0f}M<extra></extra>",
                 },
               ]}
@@ -86,7 +86,7 @@ export default function TradeBorder({ data, port }) {
                   ...series(cbp["Conveyances / Trucks"]),
                   name: "Trucks",
                   type: "bar",
-                  marker: { color: "#1f6f50" },
+                  marker: { color: "var(--green-700)" },
                 },
               ]}
               layout={{ yaxis: { title: "Trucks" } }}

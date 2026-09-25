@@ -87,7 +87,7 @@ export default function Overview({ data, onSelect }) {
                 x: communities,
                 y: communities.map((c) => latest(data.demographics[c].medianHHI)[1]),
                 type: "bar",
-                marker: { color: "#1f6f50" },
+                marker: { color: "var(--green-700)" },
                 hovertemplate: "%{x}: %{y:$,.0f}<extra></extra>",
               },
             ]}
@@ -98,13 +98,13 @@ export default function Overview({ data, onSelect }) {
                   type: "line", xref: "paper", x0: 0, x1: 1,
                   y0: latest(data.demographics["Maine"].medianHHI)[1],
                   y1: latest(data.demographics["Maine"].medianHHI)[1],
-                  line: { color: "#c8912a", width: 2, dash: "dash" },
+                  line: { color: "var(--pink)", width: 2, dash: "dash" },
                 },
               ],
               annotations: [
                 {
                   xref: "paper", x: 1, y: latest(data.demographics["Maine"].medianHHI)[1],
-                  text: "Maine", showarrow: false, yshift: 10, font: { color: "#c8912a" },
+                  text: "Maine", showarrow: false, yshift: 10, font: { color: "var(--pink)" },
                 },
               ],
             }}
